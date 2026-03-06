@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>2025 關西家族之旅 - 旗艦導遊終極版 V13.8</title>
+    <!-- 桌面圖示：紅鳥居 -->
+    <link rel="apple-touch-icon" href="https://i.ibb.co/27KXyfSt/image.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&family=Ma+Shan+Zheng&display=swap');
+        
+        :root {
+            --kyoto-red: #B22D15;
+            --bamboo-green: #3A4D39;
+            --osaka-gold: #D4AF37;
+            --washi-bg: #F9F6F0;
+            --stay-dark: #1A1A1A;
+            --premium-navy: #1E272E;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--washi-bg);
+            color: #2D3436;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            text-align: left;
+        }
+
+        .calligraphy { font-family: 'Ma Shan Zheng', cursive !important; }
+        .kaity { font-family: 'DFKai-SB', '標楷體', 'Kaiti TC', 'KaiTi', serif !important; }
+
+        .tab-active {
+            background: var(--kyoto-red) !important;
+            color: white !important;
+            box-shadow: 0 8px 20px rgba(178, 45, 21, 0.35);
+            transform: scale(1.08);
+        }
+
+        .glass-tool {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-slideUp { animation: slideUp 0.3s cubic-bezier(0, 0, 0.2, 1) forwards; }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-immersive-header {
+            height: 320px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .modal-immersive-overlay {
+            background: linear-gradient(to bottom, rgba(249, 246, 240, 0.1) 0%, rgba(249, 246, 240, 0.9) 100%);
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        .text-shadow-premium {
+            text-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 5px rgba(255, 255, 255, 0.8);
+        }
+
+        .badge-spot { background: #E6F3FF; color: #007AFF; }
+        .badge-food { background: #FFF4E6; color: #FF9500; }
+        .badge-stay { background: rgba(255, 215, 0, 0.2); color: #FFD700; border: 1px solid rgba(255, 215, 0, 0.3); }
+
+        .card-stay {
+            background-color: var(--stay-dark) !important;
+            color: #FFFFFF !important;
+            border-left: 6px solid var(--osaka-gold) !important;
+        }
+
+        .map-interactive-container {
+            width: 100%;
+            height: 400px;
+            background: #eee;
+            border-radius: 2rem;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #fff;
+            touch-action: none;
+            cursor: grab;
+        }
+
+        #zoomable-map {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transform-origin: center center;
+            will-change: transform;
+            image-rendering: high-quality;
+            image-rendering: -webkit-optimize-contrast;
+            transition: transform 0.1s ease-out;
+        }
+
+        .btn-press:active { transform: scale(0.92); opacity: 0.8; }
+        #stamina-ring { transition: stroke-dashoffset 1.2s ease-out; }
+    </style>
+</head>
+<body class="max-w-md mx-auto shadow-2xl min-h-screen pb-48 relative text-left">
+
+    <!-- Header Section -->
+    <header id="main-header" class="bg-[#3A4D39] text-white p-8 rounded-b-[4rem] shadow-2xl relative overflow-hidden min-h-[220px] flex flex-col justify-end transition-all text-left">
+        <img id="header-bg" src="https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-45 transition-all duration-700">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#3A4D39] via-transparent to-transparent opacity-80 text-left"></div>
+        <div class="relative z-10 flex justify-between items-end text-left">
+            <div class="flex-1 overflow-hidden pb-1 text-left text-left">
+                <h1 class="text-4xl font-black kaity text-gray-900 leading-none text-shadow-premium mb-1">關西小醉醉</h1>
+                <p class="text-xs font-bold text-yellow-100/80 tracking-widest uppercase">Family Luxury Tour 2025</p>
+            </div>
+            <div class="text-right flex flex-col items-end text-left">
+                <p id="weather-city-name" class="text-7xl calligraphy text-yellow-50 leading-none mb-1 drop-shadow-md text-left">--</p>
+                <div class="flex items-center justify-end gap-2 pr-1 text-left">
+                    <span id="weather-icon-inline" class="text-base opacity-90 text-left"></span>
+                    <p id="weather-temp-calligraphy" class="text-4xl calligraphy text-yellow-100 leading-none text-left">--°C</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Toolbar -->
+    <section class="px-4 -mt-10 relative z-20 flex justify-center gap-2 text-center text-left">
+        <button onclick="window.toggleTool('calc')" class="w-[23%] glass-tool p-4 rounded-[2rem] shadow-xl flex flex-col items-center btn-press"><i class="fas fa-calculator text-[--osaka-gold] mb-1.5 text-xl text-left"></i><span class="text-[9px] font-black text-gray-800 text-left">匯率</span></button>
+        <button onclick="window.toggleTool('ledger')" class="w-[23%] glass-tool p-4 rounded-[2rem] shadow-xl flex flex-col items-center btn-press"><i class="fas fa-coins text-emerald-600 mb-1.5 text-xl text-left"></i><span class="text-[9px] font-black text-gray-800 text-left">記帳</span></button>
+        <button onclick="window.toggleTool('trans')" class="w-[23%] glass-tool p-4 rounded-[2rem] shadow-xl flex flex-col items-center btn-press"><i class="fas fa-language text-blue-500 mb-1.5 text-xl text-left"></i><span class="text-[9px] font-black text-gray-800 text-left text-left">翻譯</span></button>
+        <button onclick="window.toggleTool('checklist')" class="w-[23%] glass-tool p-4 rounded-[2rem] shadow-xl flex flex-col items-center btn-press"><i class="fas fa-clipboard-list text-purple-500 mb-1.5 text-xl text-left"></i><span class="text-[9px] font-black text-gray-800 text-left text-left text-left text-left">清單</span></button>
+    </section>
+
+    <!-- Navigation -->
+    <nav class="flex overflow-x-auto whitespace-nowrap px-4 py-8 no-scrollbar sticky top-0 z-40 bg-[--washi-bg]/95 backdrop-blur-md text-left text-left">
+        <div class="flex space-x-4 mx-auto px-4 text-left" id="day-nav-container"></div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="px-6 min-h-[400px] text-left"></main>
+
+    <!-- Modal Container -->
+    <div id="tool-modal" class="hidden fixed inset-0 z-[150] flex items-end justify-center bg-black/60 backdrop-blur-md text-left" onclick="if(event.target === this) window.closeModal()">
+        <div class="bg-[--washi-bg] w-full max-w-md rounded-t-[3rem] shadow-2xl overflow-hidden animate-slideUp max-h-[92vh] flex flex-col relative text-left text-left text-left">
+            <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-4 mb-2"></div>
+            <button onclick="window.closeModal()" class="absolute top-6 right-6 z-[999] w-12 h-12 rounded-full bg-black/20 text-white flex items-center justify-center active:scale-90 shadow-lg backdrop-blur-md border border-white/20">
+                <i class="fas fa-times text-xl text-left"></i>
+            </button>
+            <div id="modal-body" class="flex-1 overflow-y-auto no-scrollbar pb-10 text-left text-left text-left text-left"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-white/95 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl border border-white p-5 z-50 flex justify-between items-center px-10 safe-pb text-left">
+        <a href="tel:0901234567" class="flex flex-col items-center text-left">
+            <div class="w-12 h-12 rounded-full bg-red-50 text-[--kyoto-red] flex items-center justify-center mb-1 shadow-sm text-center text-left text-left"><i class="fas fa-phone-alt text-xl text-left"></i></div>
+            <span class="text-[8px] font-black text-gray-500 uppercase tracking-tighter text-center">聯繫司機</span>
+        </a>
+        <div class="text-center relative -top-2">
+            <div class="relative w-16 h-16 mx-auto text-center text-left text-left">
+                <svg class="w-full h-full transform -rotate-90">
+                    <circle cx="32" cy="32" r="28" stroke="#f0f0f0" stroke-width="4" fill="transparent" />
+                    <circle id="stamina-ring" cx="32" cy="32" r="28" stroke="var(--kyoto-red)" stroke-width="4" fill="transparent" stroke-dasharray="176" stroke-dashoffset="176" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center font-black text-[--kyoto-red] text-sm text-center text-left"><span id="stamina-val">--%</span></div>
+            </div>
+            <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest text-center text-left">家族體力</span>
+        </div>
+        <button onclick="window.toggleTool('trans')" class="flex flex-col items-center text-center text-left text-left text-left text-left text-left text-left">
+            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-1 shadow-sm font-black text-center text-left text-left text-left"><i class="fas fa-robot text-xl text-left"></i></div>
+            <span class="text-[8px] font-black text-gray-500 uppercase tracking-tighter text-center text-left text-left text-left text-left text-left">AI 助手</span>
+        </button>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, onSnapshot, addDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const apiKey = ""; 
+
+        // 全域地圖狀態
+        let mapScale = 1;
+        let mapTranslate = { x: 0, y: 0 };
+
+        const tourData = {
+            1: { 
+                label: "第一日", loc: "大阪", engLoc: "Osaka", img: "https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=1200&q=80", stamina: 80, 
+                events: [
+                    { t: "09:20", s: "桃園機場 | 星宇 JX822", type: "交通", i: "plane-departure", n: "第一航廈精品航空啟程。", m: "Taoyuan+Airport", imgDetail: "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?auto=format&fit=crop&w=800", detailTitle: "星宇航向關西", intro: `建議 06:50 抵達「第一航廈」辦理手續。龍騰卡卡友可前往 T1 龍騰 VIP 休息室。特別推薦龍騰餐兌換：「畢卓樂地 Bistro-D」(靠近 T1 航廈 B5)，享用精品級餐食為旅途熱身。`, aiGuide: `首席導遊：桃園一航報到櫃台通常位於 5-7 號。利用龍騰餐點為全家補足首日戰力。` },
+                    { t: "12:50", s: "抵達關西機場 | KIX", type: "交通", i: "plane-arrival", n: "第一航廈通關入境。", m: "KIX", imgDetail: "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&w=800", detailTitle: "抵達關西", intro: `由關西機場「第一航廈」入境通關。領取行李後，展開旅程。` },
+                    { t: "15:00", s: "臨空城 Outlet (Rinku Town)", type: "購物", i: "shopping-cart", n: "西日本最大規模 Outlet，補貨首站。", m: "Rinku+Premium+Outlets", imgDetail: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800", detailTitle: "臨空城購物攻略", intro: `離機場僅一站之遙，擁有超過 200 家品牌。路面平坦，非常適合抵達首日的輕鬆採買。`, aiGuide: `資深導遊：下機第一站安排這裡最順路。建議先到服務中心領取外國遊客優惠券。` },
+                    { t: "19:00", s: "飯店入住 | 心齋橋 NORTH", type: "住宿", i: "hotel", n: "入住 MIMARU 大阪心齋橋 NORTH。", m: "MIMARU+Osaka+Shinsaibashi+North", imgDetail: "https://i.ibb.co/Wv8V9WDM/image.jpg", detailTitle: "大阪奢華寓所", intro: `專為家族設計的高質感公寓飯店，配置大型木質餐桌。`, aiGuide: `首席導遊：飯店旁即是「Life」大型超市，步行 5 分鐘即抵心齋橋。`, reserved: true },
+                    { t: "21:00", s: "🍓 宵夜掃貨與草莓攻略", type: "購物", i: "shopping-bag", n: "超市採買，享受家庭客廳時光。", m: "Life+Supermarket", imgDetail: "https://images.unsplash.com/photo-1464960710542-5674033ed5f6?auto=format&fit=crop&w=800", detailTitle: "大阪宵夜清單", intro: `前往 Life 超市採買古都華、淡雪等名產草莓。全家聚在客廳享用甜點，是最棒的開場。` }
+                ] 
+            },
+            2: { 
+                label: "第二日", loc: "大阪", engLoc: "Osaka", img: "https://i.ibb.co/4w15qLm4/image.jpg", stamina: 40, 
+                events: [
+                    { t: "08:00", s: "VIP 專屬入口報到", type: "體驗", i: "crown", n: "尊榮導覽啟程，專屬休息室。", m: "USJ+VIP+Entrance", imgDetail: "https://images.unsplash.com/photo-1590233461421-47701389772d?auto=format&fit=crop&w=800", detailTitle: "VIP 專屬報到", intro: `建議在「飯店接送區」下車。入園後直入豪華休息室，領取專屬頸鍊，在啟程前先享用專業咖啡與飲品。`, aiGuide: `首席導遊：這裡備有環球影城全區地圖，可以先對全天動線有初步規劃。`, reserved: true },
+                    { t: "09:30", s: "VIP 3小時導覽 (制霸任天堂)", type: "景點", i: "star", n: "專屬導遊領隊，任天堂區攻略。", m: "Super+Nintendo+World", imgDetail: "https://images.unsplash.com/photo-1624316812891-b3b3a6230919?auto=format&fit=crop&w=1200", detailTitle: "制霸任天堂區域", intro: `由專人引導直入「超級任天堂世界™」。<br><strong>三大遊樂設施：</strong>瑪利歐賽車、耀西冒險、咚奇剛礦車。<br><strong>特色美食：</strong>奇諾比奧咖啡店、耀西小吃島、叢林節拍奶昔、熱狗餐車。`, aiGuide: `導遊建議：耀西冒險視局最開闊。`, mapImg: "https://www.usj.co.jp/tridiondata/usj/zh/tw/files/img/common/park-map/map-nintendo.png", accessible: true },
+                    { t: "12:30", s: "📍 A, B 第一波小遊戲挑戰", type: "體驗", i: "gamepad", n: "小小兵攤位贏取玩偶。", m: "Minion+Park+Games", imgDetail: "https://images.unsplash.com/photo-1590233461421-47701389772d?auto=format&fit=crop&w=800", detailTitle: "攤位攻略", intro: `📍 A 香蕉卡巴那：錘子敲香蕉射桶。📍 B 太空殺手：擊倒罐子。年輕人表現時刻！` },
+                    { t: "13:00", s: "SAIDO 彩道：日式定食", type: "美食", i: "utensils", n: "長輩最愛定食，享折扣福利。", m: "SAIDO+USJ", imgDetail: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800", detailTitle: "彩道料理", intro: `位於紐約區。日式定食最合胃口。全員可使用 1500円餐券並享 10% 折扣。`, aiGuide: `導遊點評：比起西式漢堡，熱騰騰的定食更能幫助恢復長輩體力。`, reserved: true },
+                    { t: "14:30", s: "25週年慶典遊行：尊榮席", type: "體驗", i: "music", n: "VIP 席位觀賞，全體大合照。", m: "USJ+Parade", imgDetail: "https://images.unsplash.com/photo-1590233461421-47701389772d?auto=format&fit=crop&w=800", detailTitle: "慶典遊行視野", intro: `與皮卡丘、瑪利歐一起跳舞，這是全家 8 人大合照的最佳時刻！` },
+                    { t: "16:30", s: "4張快通 & 城堡點燈", type: "體驗", i: "ticket-alt", n: "柯南4D、哈利波特、城堡美景。", m: "Harry+Potter+USJ", imgDetail: "https://images.unsplash.com/photo-1590233461421-47701389772d?auto=format&fit=crop&w=800", detailTitle: "VIP 快通攻略", intro: `<strong>推薦分配：</strong><br>• <strong>哈利波特禁忌之旅</strong>：若怕暈，走專屬通道看城堡裝飾即可。<br>• <strong>名偵探柯南 4D</strong>：推薦！長輩坐著看華麗特效休息的首選。<br>• <strong>小小兵瘋狂之旅</strong>：視覺效果豐富。` },
+                    { t: "17:00", s: "晚間漫步與購物", type: "體驗", i: "shopping-bag", n: "好萊塢紀念品，感受魔法夜景。", m: "USJ+Finnegans", imgDetail: "https://images.unsplash.com/photo-1590233461421-47701389772d?auto=format&fit=crop&w=800", detailTitle: "USJ 之夜漫步", intro: `<strong>建議餐廳：芬尼根酒吧餐廳</strong><br>料理：炸魚薯條、牛排。氣氛輕鬆，沙發卡座舒適。`, aiGuide: `首席導遊：芬尼根對長輩非常友善，適合家族聚餐。` },
+                    { t: "21:00", s: "返回飯店休息", type: "住宿", i: "hotel", n: "回 MIMARU 大阪休息。", m: "MIMARU+Osaka+Shinsaibashi+North", imgDetail: "https://i.ibb.co/Wv8V9WDM/image.jpg", detailTitle: "影城日完美結束", reserved: true }
+                ] 
+            },
+            3: { 
+                label: "第三日", loc: "奈良", engLoc: "Nara", img: "https://i.ibb.co/Rp5Zt2vJ/image.jpg", stamina: 70, 
+                events: [
+                    { t: "09:30", s: "OSA COFFEE", type: "美食", i: "coffee", n: "中崎町文青朝聖咖啡館。", m: "3+Chome-3-10+Nakazaki,+Kita+Ward,+Osaka", imgDetail: "https://images.unsplash.com/photo-1559925393-8be0ec41b505?auto=format&fit=crop&w=800", detailTitle: "文青必喝：OSA COFFEE", intro: `具有高人氣的精品咖啡店，提供：經典美式、綿密拿鐵。冰淇淋布丁力推!!` },
+                    { t: "10:30", s: "奈良公園 / 東大寺", type: "景點", i: "hippo", n: "餵鹿與參拜大佛。", m: "Todaiji", imgDetail: "https://i.ibb.co/ksgDLctq/image.jpg", detailTitle: "東大寺參拜", intro: `奈良公園地形平坦，東大寺設有無障礙坡道。`, aiGuide: `【戰略指令】請司機停在「南大門」最近處專位放人，節省消耗。`, accessible: true },
+                    { t: "13:00", s: "志津香 - 大宮店", type: "美食", i: "utensils", n: "奈良七種釜飯人氣王。", m: "4+Chome-249-4+Omiyacho,+Nara", imgDetail: "https://images.unsplash.com/photo-1580442151529-343f2f5e0e31?auto=format&fit=crop&w=800", detailTitle: "奈良釜飯名店：志津香", intro: `<strong>經典必點：奈良七種釜飯</strong> —— 包含蝦、蟹、星鰻、若雞等。米飯香Q，鍋巴酥脆。<br><br><strong>三種吃法：</strong>第一碗原味，第二碗加配料，最後吃鍋巴。` },
+                    { t: "14:30", s: "中谷堂搗麻糬 / 三條通散步", type: "體驗", i: "walking", n: "震撼搗麻糬與名店巡禮。", m: "Nakatanidou+Nara", imgDetail: "https://i.ibb.co/vx1ptgT0/image.jpg", detailTitle: "三條通美食巡禮", intro: `• <strong>大仏いちご</strong>：巨大的草莓大福。<br>• <strong>弁才天</strong>：精品級水果大福斷面絕美。<br>• <strong>good knight ice</strong>：華麗聖代控必朝聖。` },
+                    { 
+                        t: "16:20", s: "宇治 平等院 & 抹茶時光", type: "景點", i: "leaf", n: "世遺參拜與抹茶名店巡禮。", m: "Byodoin", 
+                        imgDetail: "https://i.ibb.co/vx1ptgT0/image.jpg", detailTitle: "宇治抹茶香", 
+                        intro: `欣賞完平等院鳳凰堂的絕美倒影後，絕對不能錯過宇治的抹茶靈魂：<br><br>
+                        1. <strong>伊藤久右衛門 (Itoh Kyuemon)</strong>：<br>擁有數百年歷史，以創意抹茶聖代聞名。這裡的伴手禮種類最為齊全，從抹茶蕎麥麵到抹茶咖哩應有盡有。<br><br>
+                        2. <strong>中村藤吉 (Nakamura Tokichi)</strong>：<br>宇治最具代表性的店鋪。招牌「竹筒抹茶聖代」視覺感十足，口感豐富且不過於甜膩。店內的抹茶凍也是必吃清單。<br><br>
+                        3. <strong>福壽園宇治工房 (Fukujuen)</strong>：<br>知名的老字號茶舖，提供傳統的茶道體驗與高級煎茶。適合想要安靜品嚐道地茶文化的家人。<br><br>
+                        4. <strong>Matcha Republic 抹茶共和國</strong>：<br>近期最熱門的打卡店！招牌「可以喝的墨水」將香醇抹茶裝入精緻的墨水瓶中，瓶身設計極具現代美感。` 
+                    },
+                    { t: "18:30", s: "入住：22 Pieces 飯店", type: "住宿", i: "hotel", n: "入住京都車站旁美學名邸。", m: "22+pieces+Kyoto", imgDetail: "https://i.ibb.co/svMxj7z5/image.jpg", detailTitle: "京都奢華泊：22 pieces", reserved: true }
+                ] 
+            },
+            4: { 
+                label: "第四日", loc: "京都", engLoc: "Kyoto", img: "https://i.ibb.co/PzY0SDLD/image.jpg", stamina: 65, 
+                events: [
+                    { 
+                        t: "09:30", s: "金閣寺參拜", type: "景點", i: "sun", n: "閃耀舍利殿。感受禪意美學。", m: "Kinkakuji", 
+                        imgDetail: "https://i.ibb.co/nN541XSx/image.jpg", detailTitle: "鹿苑寺・金閣", 
+                        intro: `<strong>【京都明信片上的黃金傳說】</strong><br>金閣寺原為足利義滿將軍別墅。建築外牆覆蓋純金箔，在「鏡湖池」形成完美的黃金倒影。<br><br>這座建築融合了貴族、武家與禪宗風格，頂端飾有金色鳳凰。`, 
+                        aiGuide: `資深導遊：【停車指令】請司機停在最靠近入口處。第一個攝影點即是全家大合照首選。` 
+                    },
+                    {
+                        t: "10:45", s: "ABOUT US COFFEE", type: "美食", i: "coffee", n: "伏見巷弄精品咖啡。", m: "ABOUT+US+COFFEE+FUSHIMI+INARI",
+                        imgDetail: "https://images.unsplash.com/photo-1559925393-8be0ec41b505?auto=format&fit=crop&w=800", detailTitle: "ABOUT US COFFEE",
+                        intro: `主理人澤野井泰成先生出身精品業，將時尚與美味完美融入咖啡。店內氛圍極具質感，是參拜前後的最佳中繼站。`
+                    },
+                    { 
+                        t: "11:00", s: "伏見稻荷大社", type: "景點", i: "torii-gate", n: "千本鳥居。祈求家族平安。", m: "Fushimi", 
+                        imgDetail: "https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?auto=format&fit=crop&w=800", detailTitle: "稻荷大社・千本鳥居", 
+                        intro: `供奉守護商業繁盛的「稻荷大神」。綿延不絕的朱紅鳥居是由信徒捐獻而成。狐狸是神的使者，叼著鑰匙或卷軸。`, 
+                        aiGuide: `資深導遊：【停車戰策】請司機停在最靠近『南大門』處。我們只走平坦前段，拍完照即撤，保護體力。` 
+                    },
+                    { 
+                        t: "14:30", s: "清水寺 & 緩下坡散策", type: "景點", i: "temple", n: "清水舞台。俯瞰京都全景。", m: "Kiyomizu", 
+                        imgDetail: "https://i.ibb.co/8nLR731B/image.jpg", detailTitle: "音羽山・清水寺", 
+                        intro: `清水舞台由 139 根圓木撐起，完全無釘工藝。音羽瀑布三道清泉代表學業、戀愛、長壽。<br><br>漫步二年坂、三年坂緩步下行，感受古都韻味。`, 
+                        aiGuide: `資深導遊：【重要指令】司機務必開到『最上方停車場』。我們從舞台往老街走「下坡」，保護膝蓋！` 
+                    },
+                    { 
+                        t: "16:30", s: "祇園 / 花見小路 / 鴨川", type: "景點", i: "walking", n: "老街漫步，尋訪藝伎身影。", m: "Gion+Hanami-koji", 
+                        imgDetail: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800", 
+                        detailTitle: "京都老街散策", 
+                        intro: `漫步於花見小路，尋找藝伎的身影，並在鴨川畔享受京都靜謐的傍晚。<br><br>特別推薦沿著賀茂川邊的<strong>「花之回廊」</strong>與<strong>「半木之道」</strong>漫步，感受枝垂櫻垂落於水面，享受櫻花盛開的極致浪漫。` 
+                    },
+                    { t: "18:30", s: "返回 22 Pieces 飯店", type: "住宿", i: "hotel", n: "京都質感居。連泊第二晚。", m: "22+pieces+Kyoto", imgDetail: "https://i.ibb.co/svMxj7z5/image.jpg", detailTitle: "京都之夜休息", reserved: true }
+                ] 
+            },
+            5: { 
+                label: "第五日", loc: "京都", engLoc: "Kyoto", img: "https://i.ibb.co/JFxL6W1q/image.jpg", stamina: 75, 
+                events: [
+                    { t: "09:30", s: "嵐山小火車 & 渡月橋", type: "體驗", i: "train", n: "欣賞峽谷美景。", m: "Arashiyama", imgDetail: "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=800", detailTitle: "嵐山漫活" },
+                    { t: "14:30", s: "天龍寺 / 尊榮人力車", type: "體驗", i: "walking", n: "曹源池庭園與人力車體驗。", m: "Tenryu-ji" },
+                    { t: "18:00", s: "AEON Mall 購物 & 飯店", type: "住宿", i: "hotel", n: "京都最後一晚。22 Pieces 飯店。", m: "AEON+Mall+Kyoto", imgDetail: "https://i.ibb.co/svMxj7z5/image.jpg", detailTitle: "京都之夜收尾", reserved: true }
+                ] 
+            },
+            6: { 
+                label: "第六日", loc: "京都", engLoc: "Kyoto", img: "https://i.ibb.co/ccRs1FZB/image.jpg", stamina: 95, 
+                events: [
+                    { t: "09:00", s: "Limousine Bus 機場巴士", type: "交通", i: "bus", n: "直達關西機場。", m: "Kyoto+Station+Bus", detailTitle: "回程路徑" },
+                    { t: "14:00", s: "關西機場起飛 | JX823", type: "交通", i: "plane-departure", n: "平安返台。", m: "KIX" }
+                ] 
+            }
+        };
+
+        const checkListData = ["護照全員", "VIP 憑證", "網卡/Wifi", "日圓現金", "保暖外套", "藥品包"];
+        let exchangeRate = 0.211;
+
+        window.closeModal = () => document.getElementById('tool-modal').classList.add('hidden');
+
+        function initEnhancedMapViewer() {
+            const viewport = document.querySelector('.map-interactive-container');
+            const mapImg = document.getElementById('zoomable-map');
+            if(!mapImg || !viewport) return;
+            mapScale = 1; mapTranslate = { x: 0, y: 0 };
+            const updateUI = () => mapImg.style.transform = `translate(${mapTranslate.x}px, ${mapTranslate.y}px) scale(${mapScale})`;
+            viewport.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                mapScale = Math.min(Math.max(1, mapScale + (e.deltaY > 0 ? -0.25 : 0.25)), 5);
+                updateUI();
+            }, { passive: false });
+            let isDragging = false, startPos = { x: 0, y: 0 };
+            viewport.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startPos = { x: e.clientX - mapTranslate.x, y: e.clientY - mapTranslate.y };
+                viewport.style.cursor = 'grabbing';
+            });
+            window.addEventListener('mousemove', (e) => {
+                if(!isDragging) return;
+                mapTranslate.x = e.clientX - startPos.x;
+                mapTranslate.y = e.clientY - startPos.y;
+                updateUI();
+            });
+            window.addEventListener('mouseup', () => { isDragging = false; viewport.style.cursor = 'grab'; });
+            viewport.addEventListener('dblclick', () => { mapScale = mapScale > 1.5 ? 1 : 3; mapTranslate = {x:0, y:0}; updateUI(); });
+        }
+
+        window.toggleTool = (type, day, idx) => {
+            const modal = document.getElementById('tool-modal'), body = document.getElementById('modal-body');
+            if (!modal || !body) return;
+            modal.classList.remove('hidden');
+            body.innerHTML = '<div class="p-20 text-center"><p>資深導遊正在準備詳細內容...</p></div>';
+            setTimeout(() => {
+                if (type === 'calc') {
+                    body.innerHTML = `<div class="p-10 text-left fade-in text-left text-left text-left"><h3 class="text-3xl font-black kaity mb-6 text-left">匯率換算</h3><div class="mb-8"><label class="text-[11px] font-black text-gray-400 block mb-2 font-mono text-left">日圓 (JPY)</label><input type="number" id="jpy-input" class="w-full text-5xl font-black border-b-4 border-[--osaka-gold] py-4 outline-none bg-transparent text-left" oninput="window.runConversion()" placeholder="¥"></div><div><label class="text-[11px] font-black text-gray-400 block mb-2 font-mono text-left">台幣 (TWD)</label><p id="twd-output" class="text-6xl font-black text-[--kyoto-red] mt-2 text-left">0</p></div></div>`;
+                } else if (type === 'checklist') {
+                    body.innerHTML = `<div class="p-10 text-left fade-in text-left"><h3 class="text-3xl font-black kaity mb-6 text-left">行前清單</h3><div class="space-y-4 text-left">${checkListData.map(text => `<label class="checklist-item flex items-center gap-4 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm text-left"><input type="checkbox" class="w-6 h-6 rounded-lg border-gray-300 text-[--kyoto-red] focus:ring-[--kyoto-red] text-left text-left"><span class="text-sm font-bold text-gray-700 text-left">${text}</span></label>`).join('')}</div></div>`;
+                } else if (type === 'detail') {
+                    const d = tourData[day].events[idx];
+                    body.innerHTML = `
+                        <div class="fade-in text-left text-left text-left">
+                            <div class="modal-immersive-header" style="background-image: url('${d.imgDetail || 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800'}')"><div class="modal-immersive-overlay text-left text-left text-left text-left"></div><div class="absolute bottom-8 left-10 right-10 z-10 text-left text-left text-left"><span class="badge-spot text-[10px] px-5 py-2 rounded-full font-black mb-3 inline-block shadow-sm text-left text-left text-left">${d.type}</span><h2 class="text-4xl font-black text-gray-900 kaity text-shadow-premium leading-tight text-left text-left text-left text-left">${d.detailTitle}</h2></div></div>
+                            <div class="px-10 pb-16 pt-8 space-y-10 text-left text-left text-left">
+                                ${d.mapImg ? `<section class="text-left text-left text-left"><h4 class="text-2xl font-black kaity border-l-4 border-blue-500 pl-4 mb-4 text-left text-left">互動導覽圖</h4><div class="map-interactive-container"><img id="zoomable-map" src="${d.mapImg}" alt="地圖"></div></section>` : ''}
+                                <section class="text-left text-left text-left"><h4 class="text-2xl font-black kaity border-l-4 border-[--kyoto-red] pl-4 mb-3 text-left text-left text-left">詳細規劃與介紹</h4><p class="text-[15px] leading-relaxed text-gray-600 font-medium text-left text-left text-left">${d.intro || '詳細內容準備中。'}</p></section>
+                                ${d.aiGuide ? `<section class="bg-white p-7 rounded-[2.5rem] border border-gray-100 shadow-sm text-left text-left text-left text-left"><h4 class="text-xl font-black kaity text-[--kyoto-red] mb-3 text-left text-left"><i class="fas fa-user-tie mr-2 text-left"></i>資深導遊觀點</h4><p class="text-[14px] font-bold italic text-gray-700 text-left text-left text-left">${d.aiGuide}</p></section>` : ''}
+                                <a href="https://www.google.com/maps/search/?api=1&query=${d.m}" target="_blank" class="block w-full py-5 bg-gray-900 text-white rounded-[2rem] text-center text-lg font-black kaity shadow-xl btn-press text-left text-left text-left text-left text-left">開啟 Google 地圖導航</a>
+                            </div>
+                        </div>`;
+                    if(d.mapImg) setTimeout(initEnhancedMapViewer, 100);
+                }
+            }, 50);
+        };
+
+        window.runConversion = () => {
+            const jpy = document.getElementById('jpy-input')?.value;
+            if (jpy) document.getElementById('twd-output').innerText = (parseFloat(jpy) * exchangeRate).toLocaleString('zh-TW', {maximumFractionDigits: 1});
+        };
+
+        window.switchDay = (d) => {
+            const data = tourData[d]; if (!data) return;
+            document.querySelectorAll('#day-nav-container button').forEach(b => b.classList.remove('tab-active'));
+            document.getElementById(`tab${d}`).classList.add('tab-active');
+            document.getElementById('header-bg').src = data.img;
+            const ring = document.getElementById('stamina-ring'), dash = 176 - (176 * (data.stamina || 100) / 100);
+            ring.style.strokeDashoffset = dash; document.getElementById('stamina-val').innerText = (data.stamina || 100) + '%';
+            let html = `<div class="fade-in space-y-6 text-left text-left text-left text-left text-left">`;
+            data.events.forEach((e, idx) => {
+                let isStay = e.type === '住宿';
+                let badgeClass = isStay ? 'badge-stay' : (e.type === '美食' || e.type === '體驗' || e.type === '購物' ? 'badge-food' : 'badge-spot');
+                let cardClass = isStay ? 'card-stay shadow-lg' : 'bg-white shadow-sm border border-gray-100';
+                html += `<div class="relative pl-8 mb-8 border-l-2 border-dashed border-gray-200 text-left text-left text-left text-left text-left" onclick="window.toggleTool('detail', ${d}, ${idx})"><div class="absolute -left-2 top-0 w-4 h-4 rounded-full ${isStay ? 'bg-[--osaka-gold]' : 'bg-[--kyoto-red]'} border-4 border-white shadow-md text-left text-left text-left text-left text-left text-left text-left"></div><div class="${cardClass} rounded-[2.5rem] p-7 active:scale-[0.97] transition-all text-left text-left text-left text-left text-left text-left"><div class="flex justify-between items-center mb-4 text-left text-left text-left text-left text-left text-left text-left"><span class="${isStay ? 'bg-amber-600' : 'bg-[--bamboo-green]'} text-white text-[9px] px-3 py-1 rounded-full font-bold shadow-sm text-left text-left text-left text-left text-left">${e.t}</span><div class="flex gap-2 text-left text-left text-left text-left text-left">${e.reserved ? `<span class="bg-amber-100 text-amber-600 text-[8px] font-black px-2 py-1 rounded-lg border border-amber-200 text-left text-left text-left text-left text-left text-left">預約</span>` : ''}<span class="${badgeClass} text-[8px] font-black px-2.5 py-1 rounded-lg text-left text-left text-left text-left text-left text-left text-left text-left">${e.type}</span></div></div><h3 class="text-xl font-bold mb-2 kaity flex items-center text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"><i class="fas fa-${e.i || 'map-marker-alt'} mr-3 ${isStay ? 'text-[--osaka-gold]' : 'text-[--kyoto-red]'} text-lg opacity-80 text-left text-left text-left text-left text-left"></i>${e.s}</h3><p class="text-xs font-bold mb-4 line-clamp-1 opacity-80 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left">${e.n}</p><div class="${isStay ? 'bg-white/10' : 'bg-red-50'} px-4 py-2.5 rounded-2xl text-[10px] font-black border border-white/20 flex items-center justify-between text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"><span><i class="fas fa-eye mr-2 text-left text-left text-left text-left text-left text-left text-left text-left"></i>${isStay ? '查看飯店特色' : '查看詳情攻略'}</span><i class="fas fa-chevron-right text-[8px] opacity-40 text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left"></i></div></div></div>`;
+            });
+            document.getElementById('main-content').innerHTML = html + `</div>`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.onload = async () => {
+            const nav = document.getElementById('day-nav-container'), dayNames = ["第一日", "第二日", "第三日", "第四日", "第五日", "第六日"];
+            nav.innerHTML = dayNames.map((n, i) => `<button onclick="window.switchDay(${i+1})" id="tab${i+1}" class="px-8 py-3 rounded-[1.5rem] bg-white text-gray-400 shadow-sm border border-gray-100 font-black transition-all text-xs text-center text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left text-left">${n}</button>`).join('');
+            window.switchDay(1);
+            const rateRes = await fetch('https://open.er-api.com/v6/latest/JPY');
+            if (rateRes.ok) { const rateData = await rateRes.json(); exchangeRate = rateData.rates.TWD; window.liveRateText = `1 JPY = ${exchangeRate.toFixed(3)} TWD`; }
+        };
+    </script>
+</body>
+</html>
